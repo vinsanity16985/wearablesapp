@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">WearablesApp</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="title_activity_add_coin">AddCoinActivity</string>
+    <string name="title_activity_coin_info">CoinInfoActivity</string>
+    <string name="title_activity_add_alert">AddAlertActivity</string>
+    <string name="title_activity_alert">AlertActivity</string>
+</resources>
