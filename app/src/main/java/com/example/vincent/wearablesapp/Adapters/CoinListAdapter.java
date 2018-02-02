@@ -1,6 +1,7 @@
 package com.example.vincent.wearablesapp.Adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +20,16 @@ import java.util.List;
  * Created by Vincent on 1/21/2018.
  */
 
-public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder> {
+public class CoinListAdapter extends RecyclerView.Adapter<CoinListAdapter.CoinViewHolder> {
 
     private LayoutInflater mInflater;
-    private List<Coin> mCoinList = Collections.emptyList();
+    private Cursor mCursor;
     private Context mContext;
 
-    public CoinAdapter(Context context, List<Coin> coinList){
+    public CoinListAdapter(Context context, Cursor coinCursor){
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
-        mCoinList = coinList;
+        mCursor = coinCursor;
     }
 
     @Override
@@ -41,37 +42,51 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
 
     @Override
     public void onBindViewHolder(CoinViewHolder holder, int position) {
-        Coin currentCoin = mCoinList.get(position);
+        String name = mCursor.getString(1);
+        String ticker = mCursor.getString(2);
+        String market = mCursor.getString(3);
+        String exchange = mCursor.getString(4);
+        double price = mCursor.getDouble(5);
+        int logo = mCursor.getInt(6);
 
-        int logo = currentCoin.getImageId();
-        String name = currentCoin.getName();
-        String exchange = currentCoin.getExchange();
-        String price = Double.toString(currentCoin.getPrice());
-
-        holder.setCoin(currentCoin);
-        holder.setLogo(logo);
         holder.setName(name);
+        holder.setTicker(ticker);
+        holder.setMarket(market);
         holder.setExchange(exchange);
         holder.setPrice(price);
+        holder.setLogo(logo);
     }
 
     @Override
     public int getItemCount() {
-        return mCoinList.size();
+        if(mCursor != null)
+        {
+            return mCursor.getCount();
+        }
+        return 0;
     }
 
+    public void swapCursor(Cursor newCursor){
+        if(mCursor == newCursor){
+            return;
+        }
 
+        if(newCursor != null){
+            mCursor = newCursor;
+            notifyDataSetChanged();
+        }
+    }
 
     class CoinViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        //Keep track of the coin the current CoinViewHolder is attached to
-        private Coin mCoin;
         private MainActivity mMainActivity;
 
         private ImageView ivLogo;
         private TextView tvName;
         private TextView tvExchange;
         private TextView tvPrice;
+        private TextView tvTicker;
+        private TextView tvMarket;
 
         public CoinViewHolder(View itemView, Context context) {
             super(itemView);
@@ -83,6 +98,16 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
             tvName = itemView.findViewById(R.id.tvCoinName);
             tvExchange = itemView.findViewById(R.id.tvCoinExchange);
             tvPrice = itemView.findViewById(R.id.tvCoinPrice);
+            tvTicker = itemView.findViewById(R.id.tvCoinTicker);
+            tvMarket = itemView.findViewById(R.id.tvCoinMarket);
+        }
+
+        public void setTicker(String ticker){
+            tvTicker.setText(ticker);
+        }
+
+        public void setMarket(String market){
+            tvMarket.setText(market);
         }
 
         public void setLogo(int logoId){
@@ -97,17 +122,13 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
             tvExchange.setText(exchange);
         }
 
-        public void setPrice(String price){
-            tvPrice.setText(price);
-        }
-
-        public void setCoin(Coin coin){
-            mCoin = coin;
+        public void setPrice(double price){
+            tvPrice.setText(Double.toString(price));
         }
 
         @Override
         public void onClick(View view) {
-            mMainActivity.passCoin(mCoin);
+            //mMainActivity.changeFragment(1);
         }
     }
 }

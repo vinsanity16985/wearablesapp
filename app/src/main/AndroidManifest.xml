@@ -32,18 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activities.AddCoinActivity"
-            android:label="@string/title_activity_add_coin"></activity>
-        <activity
-            android:name=".Activities.CoinInfoActivity"
-            android:label="@string/title_activity_coin_info"></activity>
-        <activity
-            android:name=".Activities.AddAlertActivity"
-            android:label="@string/title_activity_add_alert"></activity>
-        <activity
-            android:name=".Activities.AlertActivity"
-            android:label="@string/title_activity_alert"></activity>
+
         <provider
             android:name=".Data.CoinProvider"
             android:authorities="com.example.wearablesapp.provider"/>

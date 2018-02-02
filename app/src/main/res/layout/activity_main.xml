@@ -11,15 +11,11 @@
     tools:deviceIds="wear">
 
     <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/inner_frame_layout_padding"
         app:boxedEdges="all">
-
-        <android.support.wear.widget.WearableRecyclerView
-            android:id="@+id/rvWearable"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
 
     </FrameLayout>
 
@@ -31,8 +27,8 @@
     <android.support.wear.widget.drawer.WearableActionDrawerView
         android:id="@+id/adMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:actionMenu="@menu/amenu_main"/>
+        android:layout_height="match_parent" />
+
 
 </android.support.wear.widget.drawer.WearableDrawerLayout>
 

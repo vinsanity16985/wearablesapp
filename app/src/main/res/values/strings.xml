@@ -4,9 +4,16 @@
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
-    <string name="hello_world">Hello Square World!</string>
-    <string name="title_activity_add_coin">AddCoinActivity</string>
-    <string name="title_activity_coin_info">CoinInfoActivity</string>
-    <string name="title_activity_add_alert">AddAlertActivity</string>
-    <string name="title_activity_alert">AlertActivity</string>
+
+    <string name="name_shared_preferences">Prefs</string>
+
+    <string name="tag_activity_main">MainActivity</string>
+    <string name="tag_fragment_alertadd">AlertAddFragment</string>
+    <string name="tag_fragment_alertlist">AlertListFragment</string>
+    <string name="tag_fragment_coinadd">CoinAddFragment</string>
+    <string name="tag_fragment_coininfo">CoinInfoFragment</string>
+    <string name="tag_fragment_coinlist">CoinListFragment</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

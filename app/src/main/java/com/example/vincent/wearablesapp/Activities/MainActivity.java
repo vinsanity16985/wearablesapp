@@ -1,43 +1,47 @@
 package com.example.vincent.wearablesapp.Activities;
 
-import android.content.Intent;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.wear.widget.WearableLinearLayoutManager;
-import android.support.wear.widget.WearableRecyclerView;
 import android.support.wear.widget.drawer.WearableActionDrawerView;
 import android.support.wear.widget.drawer.WearableNavigationDrawerView;
 import android.support.wearable.activity.WearableActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.vincent.wearablesapp.SimpleClasses.Coin;
-import com.example.vincent.wearablesapp.Adapters.CoinAdapter;
-import com.example.vincent.wearablesapp.Interfaces.CoinInterface;
+import com.example.vincent.wearablesapp.Data.CoinContract;
+import com.example.vincent.wearablesapp.Data.DatabaseHelper;
+import com.example.vincent.wearablesapp.Fragments.AlertListFragment;
+import com.example.vincent.wearablesapp.Fragments.CoinListFragment;
+import com.example.vincent.wearablesapp.Interfaces.FragmentInterface;
 import com.example.vincent.wearablesapp.Adapters.NavAdapter;
 import com.example.vincent.wearablesapp.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
+//Todo: Test the database by adding values and test the RecyclerViewAdapter
 //Todo: Comment everything
 //Todo: Research way to update data throughout the app - Loader or Architecture Components + Data
-//Todo: Research way to navigate top level activities (Main, Alert, Settings)
-public class MainActivity extends WearableActivity implements MenuItem.OnMenuItemClickListener, CoinInterface {
+public class MainActivity extends WearableActivity implements FragmentInterface, WearableNavigationDrawerView.OnItemSelectedListener {
 
-    private final static int REQUEST_CODE_ADD_COIN = 1;
+    private static final String TAG = "MainActivity";
 
-    private List<Coin> mCoinList;
-    private CoinAdapter mCoinAdapter;
+    private FragmentInterface mFragmentInterface;
+    private SharedPreferences mSharedPrefs;
+
     private NavAdapter mNavAdapter;
 
     private WearableNavigationDrawerView mWearableNavigationDrawer;
     private WearableActionDrawerView mWearableActionDrawer;
-    private WearableRecyclerView mWearableRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //Testing
+        DBTesting();
         //----------- Set up Wearable Navigation/Action Drawers -----------//
         mWearableNavigationDrawer = findViewById(R.id.ndMain);
         mWearableActionDrawer = findViewById(R.id.adMain);
@@ -45,84 +49,77 @@ public class MainActivity extends WearableActivity implements MenuItem.OnMenuIte
         //Set Nav Adapter
         mNavAdapter = new NavAdapter(this);
         mWearableNavigationDrawer.setAdapter(mNavAdapter);
-        mWearableNavigationDrawer.getController().peekDrawer();
+        mWearableNavigationDrawer.addOnItemSelectedListener(this);
 
-        mWearableActionDrawer.setOnMenuItemClickListener(this);
-        mWearableActionDrawer.getController().peekDrawer();
+        //Set up Coin List Action Drawer
+        //mWearableActionDrawer.setOnMenuItemClickListener(this);
 
         //---------------------------------------------------------//
 
+        FragmentManager fManager = getFragmentManager();
+        fManager.beginTransaction().replace(R.id.fragment_container, new CoinListFragment(), getString(R.string.tag_fragment_coinlist)).commit();
         //Todo: Have NavDrawer take you to selected activity
-
-        //----------- Set up the list of coins in the portfolio -----------//
-        mWearableRecyclerView = findViewById(R.id.rvWearable);
-        listTesting();
-        mCoinAdapter = new CoinAdapter(this, mCoinList);
-        mWearableRecyclerView.setAdapter(mCoinAdapter);
-        mWearableRecyclerView.setLayoutManager(new WearableLinearLayoutManager(this));
-        //-----------------------------------------------------------------//
 
         // Enables Always-on
         setAmbientEnabled();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        Coin newCoin;
-        switch (requestCode){
-            case REQUEST_CODE_ADD_COIN:
-                newCoin = new Coin();
-                newCoin.setName(data.getStringExtra("name"));
-                newCoin.setExchange(data.getStringExtra("exchange"));
-                newCoin.setImageId(data.getIntExtra("imageId", R.drawable.btc_logo));
-                newCoin.setMarket(data.getStringExtra("market"));
-                break;
-            default:
-                newCoin = new Coin();
-        }
+    public void onItemSelected(int pos) {
+        FragmentManager fm = getFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+        Log.d(getString(R.string.tag_activity_main), "Current Fragment Tag: " + currentFragment.getTag());
 
-        mCoinList.add(newCoin);
-        mCoinAdapter.notifyDataSetChanged();
+        switch(pos){
+            case 0:
+                if(currentFragment.getTag() != getString(R.string.tag_fragment_coinlist)){
+                    fm.beginTransaction().replace(R.id.fragment_container, new CoinListFragment(), getString(R.string.tag_fragment_coinlist)).commit();
+                }
+                break;
+            case 1:
+                if(currentFragment.getTag() != getString(R.string.tag_fragment_alertlist)){
+                    fm.beginTransaction().replace(R.id.fragment_container, new AlertListFragment(), getString(R.string.tag_fragment_alertlist)).commit();
+                }
+                break;
+            case 2:
+                break;
+        }
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        int id = menuItem.getItemId();
-
-        switch (id){
-            case R.id.miMain1:
-                //Open Activity to Add new Coin to Portfolio
-                Intent intent = new Intent(this, AddCoinActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_COIN);
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-    private void listTesting(){
-        mCoinList = new ArrayList<>();
-
-        Coin c1 = new Coin();
-        Coin c2 = new Coin();
-        Coin c3 = new Coin();
-
-        c1.setName("Bitcoin");
-        c2.setName("Ethereum");
-        c3.setName("Bcash");
-
-        mCoinList.add(c1);
-        mCoinList.add(c2);
-        mCoinList.add(c3);
+    public void manageActionDrawer(int menuId, MenuItem.OnMenuItemClickListener listener) {
+        mWearableActionDrawer.setOnMenuItemClickListener(listener);
+        Menu menu = mWearableActionDrawer.getMenu();
+        menu.clear();
+        getMenuInflater().inflate(menuId, menu);
+        mWearableActionDrawer.getController().peekDrawer();
     }
 
     @Override
-    public void passCoin(Coin coin) {
-        Intent intent = new Intent(this, CoinInfoActivity.class);
-        intent.putExtra("coin", coin);
+    public void manageNavigationDrawer(boolean isActive) {
+        if(isActive){
+            mWearableNavigationDrawer.setIsLocked(false);
+            mWearableNavigationDrawer.getController().peekDrawer();
+        }else{
+            mWearableNavigationDrawer.getController().closeDrawer();
+            mWearableNavigationDrawer.setIsLocked(true);
+        }
+    }
 
-        startActivity(intent);
+    private void DBTesting(){
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CoinContract.CoinTable.NAME, "Bitcoin");
+        values.put(CoinContract.CoinTable.TICKER, "BTC");
+        values.put(CoinContract.CoinTable.MARKET, "BTC/USD");
+        values.put(CoinContract.CoinTable.EXCHANGE, "Bitfinex");
+        values.put(CoinContract.CoinTable.PRICE, "10000");
+        values.put(CoinContract.CoinTable.LOGO, R.drawable.btc_logo);
+
+        long rowId = db.insert(CoinContract.CoinTable.TABLE_NAME, null, values);
+
+        Log.d(getString(R.string.tag_activity_main), "Inserted Row - " + rowId);
     }
 }

@@ -35,6 +35,9 @@ public final class CoinContract {
         public static final String MARKET = "market";
         public static final String EXCHANGE = "exchange";
         public static final String PRICE = "price";
+        public static final String LOGO = "logo";
+
+        public static final String[] COLUMNS = {_ID, NAME, TICKER, MARKET, EXCHANGE, PRICE, LOGO};
 
         public static final String CREATE_COIN_TABLE = CREATE_TABLE + TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -42,7 +45,8 @@ public final class CoinContract {
                 TICKER + " TEXT NOT NULL, "+
                 MARKET + " TEXT NOT NULL, " +
                 EXCHANGE + " TEXT NOT NULL, " +
-                PRICE + " REAL DEFAULT  0);"                ;
+                PRICE + " REAL DEFAULT  0" +
+                LOGO + "INTEGER);";
 
         public static final String DELETE_COIN_TABLE = DROP_TABLE + TABLE_NAME;
 

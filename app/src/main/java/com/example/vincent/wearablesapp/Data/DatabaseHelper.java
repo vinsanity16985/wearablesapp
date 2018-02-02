@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private ContentResolver mContentResolver;
 
-    DatabaseHelper(Context context){
+    public DatabaseHelper(Context context){
         super(context, CoinContract.DATABASE_NAME, null, 1);
         mContentResolver = context.getContentResolver();
     }
