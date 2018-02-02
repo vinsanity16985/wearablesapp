@@ -19,16 +19,14 @@ import android.support.annotation.Nullable;
 public class CoinProvider extends ContentProvider {
 
     //Flags for choosing the URI
-    private static final int COINTTABLE_URI = 1;
-    private static final int COINTABLE_ROW_URI = 10;
+    private static final int CODE_COINTABLE = 1;
 
     private DatabaseHelper mDBHelper;
     private static UriMatcher mMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     //Add URI's to matcher for easy access
     static{
-        mMatcher.addURI(CoinContract.AUTHORITY, CoinContract.URI_COINTABLE, COINTTABLE_URI);
-        mMatcher.addURI(CoinContract.AUTHORITY, CoinContract.URI_COINTABLE + "/#", COINTABLE_ROW_URI);
+        mMatcher.addURI(CoinContract.AUTHORITY, CoinContract.PATH_COINTABLE, CODE_COINTABLE);
     }
 
     @Override
@@ -45,11 +43,8 @@ public class CoinProvider extends ContentProvider {
         int uriType = mMatcher.match(uri);
 
         switch(uriType){
-            case COINTTABLE_URI:
+            case CODE_COINTABLE:
                 //Query whole table
-                break;
-            case COINTABLE_ROW_URI:
-                //Query for single row
                 break;
             default:
                 //Error Handling
@@ -67,7 +62,7 @@ public class CoinProvider extends ContentProvider {
         int uriType = mMatcher.match(uri);
 
         switch(uriType){
-            case COINTTABLE_URI:
+            case CODE_COINTABLE:
                 return "text";
             default:
                 return null;
@@ -84,7 +79,7 @@ public class CoinProvider extends ContentProvider {
 
         long id = 0;
         switch (uriType) {
-            case COINTTABLE_URI:
+            case CODE_COINTABLE:
                 id = db.insert(CoinContract.CoinTable.TABLE_NAME, null, contentValues);
                 break;
             default:
@@ -92,7 +87,7 @@ public class CoinProvider extends ContentProvider {
         }
         getContext().getContentResolver().notifyChange(uri, null);
 
-        return Uri.parse(CoinContract.URI_COINTABLE + "/" + id);
+        return Uri.parse(CoinContract.PATH_COINTABLE + "/" + id);
     }
 
     @Override
@@ -102,7 +97,7 @@ public class CoinProvider extends ContentProvider {
         int rowsDeleted = 0;
 
         switch (uriType){
-            case COINTTABLE_URI:
+            case CODE_COINTABLE:
                 rowsDeleted = db.delete(CoinContract.CoinTable.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
@@ -120,7 +115,7 @@ public class CoinProvider extends ContentProvider {
         int rowsUpdated = 0;
 
         switch(uriType){
-            case COINTTABLE_URI:
+            case CODE_COINTABLE:
                 rowsUpdated = db.update(CoinContract.CoinTable.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             default:

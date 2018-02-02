@@ -1,15 +1,14 @@
 package com.example.vincent.wearablesapp.Fragments;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.wear.widget.WearableLinearLayoutManager;
 import android.support.wear.widget.WearableRecyclerView;
 import android.view.LayoutInflater;
@@ -30,9 +29,7 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
     private SharedPreferences mSharedPrefs;
     private FragmentInterface mInterface;
     private Context mContext;
-    private Cursor mCursor;
     private CoinListAdapter mCoinListAdapter;
-    private LoaderManager mLoaderManager;
 
     private WearableRecyclerView rvCoinList;
 
@@ -50,13 +47,6 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLoaderManager = getLoaderManager();
-        //get mSharedPrefs
-        mSharedPrefs = mContext.getSharedPreferences(getString(R.string.name_shared_preferences), Context.MODE_PRIVATE);
-        if(!mSharedPrefs.getAll().isEmpty()){
-            //if mSharedPrefs has data then fill cursor with it
-
-        }
     }
 
 
@@ -71,7 +61,7 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
             //Take saved data and put into mCursor
         }
         //define the recycler view
-        mCoinListAdapter = new CoinListAdapter(getContext(), mCursor);
+        mCoinListAdapter = new CoinListAdapter(getContext());
         rvCoinList.setAdapter(mCoinListAdapter);
         rvCoinList.setLayoutManager(new WearableLinearLayoutManager(getContext()));
 
@@ -86,7 +76,7 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
         mInterface.manageActionDrawer(R.menu.amenu_coinlist, this);
         mInterface.manageNavigationDrawer(true);
 
-        mLoaderManager.initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -113,9 +103,9 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
 
     //Basically Logically determine what SQL query needs to be sent to the db, and give to the loader
     @Override
-    public Loader onCreateLoader(int i, Bundle bundle) {
+    public android.content.Loader onCreateLoader(int i, Bundle bundle) {
         //Location of Data
-        Uri uri = Uri.parse(CoinContract.AUTHORITY + CoinContract.URI_COINTABLE);
+        Uri uri = Uri.parse(CoinContract.URI_COINTABLE);
 
         //Columns to return
         String[] projection = CoinContract.CoinTable.COLUMNS;
@@ -134,15 +124,17 @@ public class CoinListFragment extends Fragment implements MenuItem.OnMenuItemCli
     }
 
     @Override
-    public void onLoadFinished(Loader loader, Object o) {
+    public void onLoadFinished(android.content.Loader loader, Object o) {
         //Do something with the data returned, update UI with new data
         //Set up Recycler View with data from CoinListAdapter
         mCoinListAdapter.swapCursor((Cursor)o);
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(android.content.Loader loader) {
         //Discard old data
         mCoinListAdapter.swapCursor(null);
     }
+
+
 }

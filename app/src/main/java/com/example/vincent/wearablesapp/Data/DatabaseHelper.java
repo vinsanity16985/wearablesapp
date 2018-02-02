@@ -25,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Create Necessary Tables
+        db.execSQL(CoinContract.CoinTable.DELETE_COIN_TABLE);
         db.execSQL(CoinContract.CoinTable.CREATE_COIN_TABLE);
     }
 
@@ -33,13 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Todo: Implement onUpgrade - Follow this guide https://thebhwgroup.com/blog/how-android-sqlite-onupgrade
         db.execSQL(CoinContract.CoinTable.DELETE_COIN_TABLE);
         onCreate(db);
-    }
-
-    public void addCoin(Coin coin){
-        ContentValues values = new ContentValues();
-        values.put(CoinContract.CoinTable.NAME, "");
-
-        mContentResolver.insert(Uri.parse(CoinContract.URI_COINTABLE), values);
     }
 
 }

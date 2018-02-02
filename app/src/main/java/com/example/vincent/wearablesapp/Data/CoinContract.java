@@ -1,5 +1,6 @@
 package com.example.vincent.wearablesapp.Data;
 
+import android.content.ContentResolver;
 import android.provider.BaseColumns;
 
 /**
@@ -8,9 +9,13 @@ import android.provider.BaseColumns;
 
 public final class CoinContract {
 
-    //URI Authority(root) and Tables(sub-folders)
+    //Strings for building URI's
+    public static final String SCHEME = "content://";
     public static final String AUTHORITY = "com.example.wearablesapp.provider";
-    public static final String URI_COINTABLE = "/" + CoinTable.TABLE_NAME;
+    public static final String PATH_COINTABLE = "/" + CoinTable.TABLE_NAME;
+
+    //URIs
+    public static final String URI_COINTABLE = SCHEME + AUTHORITY + PATH_COINTABLE;
 
     //DB Name and Version
     public static final int DATABASE_VERSION = 1;
@@ -45,8 +50,8 @@ public final class CoinContract {
                 TICKER + " TEXT NOT NULL, "+
                 MARKET + " TEXT NOT NULL, " +
                 EXCHANGE + " TEXT NOT NULL, " +
-                PRICE + " REAL DEFAULT  0" +
-                LOGO + "INTEGER);";
+                PRICE + " REAL DEFAULT 0, " +
+                LOGO + " INTEGER);";
 
         public static final String DELETE_COIN_TABLE = DROP_TABLE + TABLE_NAME;
 

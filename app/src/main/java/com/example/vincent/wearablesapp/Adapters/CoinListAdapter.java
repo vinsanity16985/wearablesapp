@@ -26,10 +26,9 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListAdapter.CoinVi
     private Cursor mCursor;
     private Context mContext;
 
-    public CoinListAdapter(Context context, Cursor coinCursor){
+    public CoinListAdapter(Context context){
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
-        mCursor = coinCursor;
     }
 
     @Override
@@ -42,6 +41,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListAdapter.CoinVi
 
     @Override
     public void onBindViewHolder(CoinViewHolder holder, int position) {
+        mCursor.moveToFirst();
         String name = mCursor.getString(1);
         String ticker = mCursor.getString(2);
         String market = mCursor.getString(3);

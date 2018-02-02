@@ -2,9 +2,11 @@ package com.example.vincent.wearablesapp.Activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.wear.widget.drawer.WearableActionDrawerView;
 import android.support.wear.widget.drawer.WearableNavigationDrawerView;
@@ -107,9 +109,8 @@ public class MainActivity extends WearableActivity implements FragmentInterface,
     }
 
     private void DBTesting(){
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getWritableDatabase();
-
+        Uri uri = Uri.parse(CoinContract.URI_COINTABLE);
+        ContentResolver resolver = getContentResolver();
         ContentValues values = new ContentValues();
         values.put(CoinContract.CoinTable.NAME, "Bitcoin");
         values.put(CoinContract.CoinTable.TICKER, "BTC");
@@ -118,8 +119,8 @@ public class MainActivity extends WearableActivity implements FragmentInterface,
         values.put(CoinContract.CoinTable.PRICE, "10000");
         values.put(CoinContract.CoinTable.LOGO, R.drawable.btc_logo);
 
-        long rowId = db.insert(CoinContract.CoinTable.TABLE_NAME, null, values);
+        Uri returnUri = resolver.insert(uri, values);
 
-        Log.d(getString(R.string.tag_activity_main), "Inserted Row - " + rowId);
+        Log.d(getString(R.string.tag_activity_main), "Returned Uri - " + returnUri);
     }
 }
